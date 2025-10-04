@@ -40,6 +40,9 @@ public class VerifyServiceImpl implements VerifyService {
     @Override
     public Mono<ResponseEntity<VerifyResponse>> verify(VerifyRequest req) {
         try {
+            if (req == null || req.getNonce() == null || req.getSigBase64Url() == null)
+                throw new IllegalArgumentException("Invalid request: missing required fields.");
+
             log.info("Received request: {}", req);
             // Validate & consume nonce first (replay protection)
             if (!nonceService.validateAndConsume(req.getNonce())) {

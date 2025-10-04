@@ -38,3 +38,25 @@ if [[ -z "${NONCE:-}" ]]; then
   exit 1
 fi
 echo "[holder] nonce: $NONCE"
+
+# Sign EXACT ASCII message = nonce (DER ECDSA)
+echo "[holder] signing nonce with ES256..."
+SIG_DER_FILE="$(mktemp)"
+printf "%s" "$NONCE" | openssl dgst -sha256 -sign "$KEY_FILE" > "$SIG_DER_FILE"
+SIG_B64="$(b64 < "$SIG_DER_FILE")"
+rm -f "$SIG_DER_FILE"
+echo "[holder] signature (base64, first 60 chars): ${SIG_B64:0:60}..."
+
+# POST /api/verify
+BODY=$(cat <<JSON
+{
+  "nonce": "${NONCE}",
+  "sigBase64Url": "${SIG_B64}"
+}
+JSON
+)
+
+echo "[holder] request body: $BODY"
+echo "[holder] calling /api/verify..."
+RESP="$(curl -sS -X POST -H 'Content-Type: application/json' -d "$BODY" "${VERIFIER_URL}/api/verify")"
+echo "[holder] /api/verify response: $RESP"

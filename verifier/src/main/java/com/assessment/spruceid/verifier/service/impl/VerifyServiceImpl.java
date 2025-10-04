@@ -73,7 +73,7 @@ public class VerifyServiceImpl implements VerifyService {
             return Mono.just(ResponseEntity.badRequest()
                     .body(VerifyResponse.builder()
                             .verified(false)
-                            .message("Request processing failed. Invalid request : " + e.getMessage())
+                            .message("Request processing failed. Invalid request: " + e.getMessage())
                             .build()));
         }
     }

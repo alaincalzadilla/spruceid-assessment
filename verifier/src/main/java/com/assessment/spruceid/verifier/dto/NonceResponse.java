@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VerifyResponse {
-    private boolean verified;   // true if verification is successful, false otherwise
-    private String message;     // additional message or error details
+public class NonceResponse {
+    private String nonce; // challenge proves liveness and prevents replay
+    private long issuedAt; // created time
+    private long expiresAt; // expiration time
 }

@@ -15,5 +15,5 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VerifyRequest {
     private String nonce; // challenge proves liveness and prevents replay
-    private String sig_b64url; // ECDSA (DER) signature
+    private String sigBase64Url; // ECDSA (DER) signature
 }

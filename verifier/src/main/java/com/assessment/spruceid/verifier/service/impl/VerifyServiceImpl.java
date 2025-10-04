@@ -29,7 +29,7 @@ public class VerifyServiceImpl implements VerifyService {
 
     /**
      * Verify the signature over the nonce using the trusted public key.
-     * Body: { "nonce": "...", "sig_b64url": "..." }
+     * Body: { "nonce": "...", "sigBase64Url": "..." }
      * Steps:
      * 1. Check nonce freshness and consume it (prevents replay).
      * 2. Verify ECDSA signature over EXACT ASCII: nonce, using pre-installed public key.
@@ -52,7 +52,7 @@ public class VerifyServiceImpl implements VerifyService {
 
             // Verify ECDSA signature over ASCII "nonce" with ES256
             byte[] msg = req.getNonce().getBytes(StandardCharsets.US_ASCII);
-            byte[] sigDer = decodeB64Flexible(req.getSig_b64url());
+            byte[] sigDer = decodeB64Flexible(req.getSigBase64Url());
 
             Signature s = Signature.getInstance("SHA256withECDSA");
             s.initVerify(verifierPublicKey);

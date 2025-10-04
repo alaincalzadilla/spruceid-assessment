@@ -40,6 +40,7 @@ public class VerifyServiceImpl implements VerifyService {
     @Override
     public Mono<ResponseEntity<VerifyResponse>> verify(VerifyRequest req) {
         try {
+            log.info("Received request: {}", req);
             // Validate & consume nonce first (replay protection)
             if (!nonceService.validateAndConsume(req.getNonce())) {
                 return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -51,7 +52,8 @@ public class VerifyServiceImpl implements VerifyService {
 
             // Verify ECDSA signature over ASCII "nonce" with ES256
             byte[] msg = req.getNonce().getBytes(StandardCharsets.US_ASCII);
-            byte[] sigDer = Base64.getUrlDecoder().decode(req.getSig_b64url());
+            // byte[] sigDer = Base64.getUrlDecoder().decode(req.getSig_b64url());
+            byte[] sigDer = decodeB64Flexible(req.getSig_b64url());
 
             Signature s = Signature.getInstance("SHA256withECDSA");
             s.initVerify(verifierPublicKey);
@@ -74,6 +76,14 @@ public class VerifyServiceImpl implements VerifyService {
                             .verified(false)
                             .message("Request processing failed. Invalid request : " + e.getMessage())
                             .build()));
+        }
+    }
+
+    private static byte[] decodeB64Flexible(String s) {
+        try {
+            return Base64.getUrlDecoder().decode(s);   // works if holder sends base64url
+        } catch (IllegalArgumentException ignore) {
+            return Base64.getDecoder().decode(s);      // fallback for standard base64 (+,/)
         }
     }
 }

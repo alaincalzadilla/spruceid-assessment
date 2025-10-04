@@ -52,7 +52,6 @@ public class VerifyServiceImpl implements VerifyService {
 
             // Verify ECDSA signature over ASCII "nonce" with ES256
             byte[] msg = req.getNonce().getBytes(StandardCharsets.US_ASCII);
-            // byte[] sigDer = Base64.getUrlDecoder().decode(req.getSig_b64url());
             byte[] sigDer = decodeB64Flexible(req.getSig_b64url());
 
             Signature s = Signature.getInstance("SHA256withECDSA");

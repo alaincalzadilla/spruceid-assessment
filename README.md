@@ -27,16 +27,16 @@ This aligns with common self-custodial auth flows: **server issues challenge →
 ## Architecture
 
 ```
-Holder (Bash)                       Verifier (Web API - WebFlux)
----------------                     --------------------------------------
-1) GET /nonce  ------------------->  Issues single-use nonce (TTL=5m)
+Holder (Bash)                           Verifier (Web API - WebFlux)
+---------------                         --------------------------------------
+1) GET /api/nonce/issue  ------------->  Issues single-use nonce (TTL=5m)
 
 2) Sign exact ASCII "nonce"
    with ES256 via OpenSSL
 
-3) POST /verify { nonce, sig } --->  Validates signature with stored public key,
-                                     consumes nonce (prevents replay)
-<----------------------------------  200 { "verified": true }
+3) POST /api/verify { nonce, sig } --->  Validates signature with stored public key,
+                                         consumes nonce (prevents replay)
+<--------------------------------------  200 { "verified": true }
 ```
 ---
 
